@@ -1,0 +1,71 @@
+data:
+  series_path: "data/train_series.parquet"
+  events_path: "data/train_events.csv"
+  sample_rate_sec: 5
+  synthetic:
+    num_series: 12
+    days_per_series: 4
+    noise_level: 0.1
+    random_seed: 42
+
+splits:
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  random_seed: 42
+
+windowing:
+  window_size_steps: 60
+  stride_steps: 12
+
+features:
+  use_enmo_stats: true
+  use_anglez_stats: true
+  use_derivatives: true
+  use_spectral: true
+  use_temporal_context: true
+
+baseline:
+  enmo_threshold: 0.02
+  smoothing_window: 15
+  min_persistence_steps: 12
+
+models:
+  logistic_regression:
+    C: 1.0
+    max_iter: 500
+    class_weight: "balanced"
+  random_forest:
+    n_estimators: 100
+    max_depth: 12
+    n_jobs: -1
+    random_state: 42
+  lightgbm:
+    n_estimators: 200
+    learning_rate: 0.05
+    num_leaves: 31
+    random_state: 42
+    verbose: -1
+  cnn:
+    sequence_length: 60
+    in_channels: 2
+    conv_filters: [32, 64, 128]
+    kernel_sizes: [7, 5, 3]
+    dense_dim: 64
+    dropout: 0.3
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    batch_size: 64
+    epochs: 15
+
+postprocessing:
+  sleep_onset_threshold: 0.75
+  wake_threshold: 0.25
+  min_onset_persistence_steps: 12
+  min_wake_persistence_steps: 6
+  min_event_separation_steps: 36
+  smooth_window: 7
+
+evaluation:
+  tolerances_seconds: [30, 60, 120, 300, 900]
+
